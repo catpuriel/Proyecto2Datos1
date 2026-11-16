@@ -1,0 +1,50 @@
+[
+    {
+        "codigo": "AA01",
+        "nombre": "Agua Mineral Chirripó 700ml",
+        "descripcion": "Botella de agua mineral sin gas",
+        "categoria": "Bebidas",
+        "precio": 700,
+        "cantidadLocal": 40
+    },
+    {
+        "codigo": "AA06",
+        "nombre": "Cereal Kepos sabor jocote 500g",
+        "descripcion": "Cereal sabor jocote integral",
+        "categoria": "Cereal",
+        "precio": 2100,
+        "cantidadLocal": 5
+    },
+    {
+        "codigo": "AA16",
+        "nombre": "Leche Partida 1l",
+        "descripcion": "Leche partida de vaca",
+        "categoria": "Bebidas",
+        "precio": 850,
+        "cantidadLocal": 12
+    },
+    {
+        "codigo": "AA18",
+        "nombre": "Lomito de Champivaca 500g",
+        "descripcion": "Carne en lomo de champivaca",
+        "categoria": "Carne",
+        "precio": 5700,
+        "cantidadLocal": 17
+    },
+    {
+        "codigo": "AA19",
+        "nombre": "Tomahawk TonyHawk 1kg",
+        "descripcion": "Kilo de Tomahawk",
+        "categoria": "Carne",
+        "precio": 8700,
+        "cantidadLocal": 37
+    },
+    {
+        "codigo": "AA20",
+        "nombre": "Crema Sivea 220ml",
+        "descripcion": "Crema para hidratación de la piel",
+        "categoria": "Aseo",
+        "precio": 3500,
+        "cantidadLocal": 25
+    }
+]
