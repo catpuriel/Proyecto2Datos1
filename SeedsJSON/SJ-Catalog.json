@@ -1,0 +1,58 @@
+[
+    {
+        "codigo": "AA01",
+        "nombre": "Agua Mineral 700ml",
+        "descripcion": "Botella de agua mineral sin gas",
+        "categoria": "Bebidas",
+        "precio": 700,
+        "cantidadLocal": 30
+    },
+    {
+        "codigo": "AA02",
+        "nombre": "Pepsi 2.5l",
+        "descripcion": "Botella de Pepsi original",
+        "categoria": "Bebidas",
+        "precio": 1000,
+        "cantidadLocal": 34
+    },
+    {
+        "codigo": "AA03",
+        "nombre": "Pastel de chocolate",
+        "descripcion": "Pastel con glaseado de chocolate y chispas",
+        "categoria": "Panadería",
+        "precio": 8500,
+        "cantidadLocal": 7
+    },
+    {
+        "codigo": "AA04",
+        "nombre": "Café 1820 premium 500g",
+        "descripcion": "Café molido de calidad",
+        "categoria": "Bebidas",
+        "precio": 6000,
+        "cantidadLocal": 15
+    },
+    {
+        "codigo": "AA05",
+        "nombre": "Pringles de camote L.E 300g",
+        "descripcion": "Edición limitada de Pringles de camote",
+        "categoria": "Snack",
+        "precio": 1100,
+        "cantidadLocal": 11
+    },
+    {
+        "codigo": "AA06",
+        "nombre": "Cereal Kellogs sabor jocote 500g",
+        "descripcion": "Botella de agua mineral sin gas",
+        "categoria": "Cereal",
+        "precio": 2100,
+        "cantidadLocal": 27
+    },
+    {
+        "codigo": "AA07",
+        "nombre": "Pasta dental Bob Esponja",
+        "descripcion": "Pasta dental sin fluor sabor dulce",
+        "categoria": "Aseo",
+        "precio": 1700,
+        "cantidadLocal": 25
+    }
+]
