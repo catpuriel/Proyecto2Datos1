@@ -1,0 +1,58 @@
+[
+    {
+        "codigo": "AA01",
+        "nombre": "Agua Mineral Chirripó 700ml",
+        "descripcion": "Botella de agua mineral sin gas",
+        "categoria": "Bebidas",
+        "precio": 700,
+        "cantidadLocal": 24
+    },
+    {
+        "codigo": "AA02",
+        "nombre": "Petsi 2.5l",
+        "descripcion": "Botella de cola Petsi original",
+        "categoria": "Bebidas",
+        "precio": 1000,
+        "cantidadLocal": 2
+    },
+    {
+        "codigo": "AA08",
+        "nombre": "Yogurt Tres Pinos Mango 1l",
+        "descripcion": "Yogurt natural sabor a mango",
+        "categoria": "Lacteos",
+        "precio": 700,
+        "cantidadLocal": 30
+    },
+    {
+        "codigo": "AA09",
+        "nombre": "Maní Salado Nuv 250g",
+        "descripcion": "Semillas de maní con sal",
+        "categoria": "Snacks",
+        "precio": 1100,
+        "cantidadLocal": 18
+    },
+    {
+        "codigo": "AA10",
+        "nombre": "Detergente líquido Ursula 1l",
+        "descripcion": "Concentrado de detergente líquido para ropa",
+        "categoria": "Limpieza",
+        "precio": 3000,
+        "cantidadLocal": 32
+    },
+    {
+        "codigo": "AA11",
+        "nombre": "Arroz Tio Peludo 4kg",
+        "descripcion": "Arroz de grano entero",
+        "categoria": "Bebidas",
+        "precio": 1000,
+        "cantidadLocal": 34
+    },
+    {
+        "codigo": "AA12",
+        "nombre": "Atun Tung Enlatado 140g",
+        "descripcion": "Atún en aceite en trocitos",
+        "categoria": "Enlatados",
+        "precio": 700,
+        "cantidadLocal": 29
+    }
+]
