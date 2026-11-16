@@ -1,0 +1,58 @@
+[
+    {
+        "codigo": "AA01",
+        "nombre": "Agua Mineral Chirripó 700ml",
+        "descripcion": "Botella de agua mineral sin gas",
+        "categoria": "Bebidas",
+        "precio": 700,
+        "cantidadLocal": 30
+    },
+    {
+        "codigo": "AA10",
+        "nombre": "Detergente líquido Ursula 1l",
+        "descripcion": "Concentrado de detergente líquido para ropa",
+        "categoria": "Limpieza",
+        "precio": 3000,
+        "cantidadLocal": 0
+    },
+    {
+        "codigo": "AA13",
+        "nombre": "Galletas Marta 8 pack",
+        "descripcion": "Paquete de 8 galletas Marta",
+        "categoria": "Bebidas",
+        "precio": 1200,
+        "cantidadLocal": 9
+    },
+    {
+        "codigo": "AA14",
+        "nombre": "Pan MiBimbo Extra Grande",
+        "descripcion": "Pan Extra Grande Familiar",
+        "categoria": "Panadería",
+        "precio": 2500,
+        "cantidadLocal": 36
+    },
+    {
+        "codigo": "AA15",
+        "nombre": "Jugo de naranja DelCerro 1L",
+        "descripcion": "Jugo de naranja natural",
+        "categoria": "Bebidas",
+        "precio": 2100,
+        "cantidadLocal": 29
+    },
+    {
+        "codigo": "AA16",
+        "nombre": "Leche Partida 1l",
+        "descripcion": "Leche partida de vaca",
+        "categoria": "Bebidas",
+        "precio": 850,
+        "cantidadLocal": 34
+    },
+    {
+        "codigo": "AA17",
+        "nombre": "Pasta Fideos Pompeya",
+        "descripcion": "Fideos tipo Spaghetti",
+        "categoria": "Pasta",
+        "precio": 1000,
+        "cantidadLocal": 16
+    }
+]
