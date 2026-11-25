@@ -4,14 +4,14 @@ using System;
 
 namespace ProyectoDatos2.Models
 {
-    public class Productos
+    public class Producto
     {
-        public string Codigo;
-        public string Nombre;
-        public string Descripcion;
-        public string Categoria;
-        public double PrecioVenta;
-        public int CantidadLocal;
-        public ExistenciaSede[] StockGlobal;
+        public string Codigo { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public string Categoria { get; set; }
+        public double PrecioVenta { get; set; }
+        public int CantidadLocal { get; set; }
+        public ExistenciaSede[] StockGlobal { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace ProyectoDatos2.Models
 {
     public class ExistenciaSede
     {
-        private string IdSede { get; set; }
-        private string Producto { get; set; }
-        private int Cantidad { get; set; }
+        public string IdSede;
+        public string Producto;
+        public int Cantidad;
     }
 }
