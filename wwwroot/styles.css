@@ -48,3 +48,44 @@ th, td {
 .oculto {
     display: none;
 }
+
+#zona-mock {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.caja-form {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.caja-form h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.caja-form input,
+.caja-form select,
+.caja-form button {
+    padding: 5px 8px;
+    margin-right: 6px;
+}
+
+#buscar-catalogo {
+    padding: 6px 8px;
+    width: 260px;
+}
+
+.mensaje {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.vacio {
+    text-align: center;
+    color: #666;
+}
