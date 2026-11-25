@@ -1,0 +1,442 @@
+[
+    {
+        "codigo": "AA01",
+        "nombre": "Agua Mineral Chirripó 700ml",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 30
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 24
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 30
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 40
+            }
+        ]
+    },
+    {
+        "codigo": "AA02",
+        "nombre": "Petsi 2.5l",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 34
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 2
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA03",
+        "nombre": "Pastel de chocolate Moussemanil",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 7
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA04",
+        "nombre": "Café 1620 premium 500g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 15
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA05",
+        "nombre": "Springles de camote L.E 300g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 11
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA06",
+        "nombre": "Cereal Kepos sabor jocote 500g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 27
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 5
+            }
+        ]
+    },
+    {
+        "codigo": "AA07",
+        "nombre": "Pasta dental Bob Esponja",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 25
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA08",
+        "nombre": "Yogurt Tres Pinos Mango 1l",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 30
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA09",
+        "nombre": "Maní Salado Nuv 250g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 18
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA10",
+        "nombre": "Detergente líquido Ursula 1l",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 32
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA11",
+        "nombre": "Arroz Tio Peludo 4kg",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 34
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA12",
+        "nombre": "Atun Tung Enlatado 140g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 29
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA13",
+        "nombre": "Galletas Marta 8 pack",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 9
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA14",
+        "nombre": "Pan MiBimbo Extra Grande",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 36
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA15",
+        "nombre": "Jugo de naranja DelCerro 1L",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 29
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA16",
+        "nombre": "Leche Partida 1l",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 34
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 12
+            }
+        ]
+    },
+    {
+        "codigo": "AA17",
+        "nombre": "Pasta Fideos Pompeya",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 16
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 0
+            }
+        ]
+    },
+    {
+        "codigo": "AA18",
+        "nombre": "Lomito de Champivaca 500g",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 17
+            }
+        ]
+    },
+    {
+        "codigo": "AA19",
+        "nombre": "Tomahawk TonyHawk 1kg",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 37
+            }
+        ]
+    },
+    {
+        "codigo": "AA20",
+        "nombre": "Crema Sivea 220ml",
+        "stockGlobal": [
+            {
+                "idSede": "SJ",
+                "cantidad": 0
+            },
+            {
+                "idSede": "ALA",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIM",
+                "cantidad": 0
+            },
+            {
+                "idSede": "LIB",
+                "cantidad": 25
+            }
+        ]
+    }
+]
