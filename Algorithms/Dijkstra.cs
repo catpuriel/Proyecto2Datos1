@@ -4,6 +4,19 @@ public static class Dijkstra
 
     // dist[i] = minutos mínimos desde 'source' hasta el lugar i
     // prev[i] = de qué lugar se viene para llegar a i (sirve para reconstruir la ruta)
+
+    /*
+        Este es el metodo más importante, con este se corre Dijkstra, siempre
+        Si quieren buscar la ruta de un lugar a otro, ponen el grafo primero,
+        despues el origen, él les va a tirar en unas variables que decidan
+        (las que tienen que reemplazar por "dist" y "prev", aunque igual se pueden
+        poner como dist y prev, solo ojo con que no se repitan), ahi en dist está
+        la distancia (tiempo) para llegar a cada punto, como en la parte final de la
+        matriz de barbozilla, y ya prev dice de que lugar se viene para llegar hasta el
+        indice que le den
+        Siento que era importante especificar esto para quien interese despues, entonces
+        ahi ta 
+    */
     public static void Run(Graph g, int source, out int[] dist, out int[] prev)
     {
         //n es la cantidad de vertices en el grafo
@@ -81,5 +94,5 @@ public static class Dijkstra
 
     return path;
     }
-    //si yo soy evan y yo pongo esos comentarios re basura pero si no se me olvida que hice xd
+    //alguien realmente lee esto?
 }
