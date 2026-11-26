@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ConviTEC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>ConviTEC</h1>
+        <p id="info-sede">Sede: San José (SJ) | Vehículo en: San José</p>
+    </header>
+
+    <!-- botones para cambiar entre las vistas -->
+    <nav>
+        <button onclick="verTab('catalogo')">Catálogo Global</button>
+        <button onclick="verTab('inventario')">Inventario Local</button>
+        <button onclick="verTab('pedido')">Realizar Pedido</button>
+        <button onclick="verTab('entregas')">Entregas y Pedidos</button>
+        <button onclick="verTab('ventas')">Ventas y Estadísticas</button>
+    </nav>
+
+    <main>
+        <!-- vista 1: catalogo global -->
+        <section id="catalogo" class="tab">
+            <h2>Catálogo Global</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>SJ</th>
+                        <th>ALA</th>
+                        <th>LIB</th>
+                        <th>LIM</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-catalogo">
+                    <!-- se llena con js -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- vista 2: inventario local (se termina mañana) -->
+        <section id="inventario" class="tab oculto">
+            <h2>Inventario Local</h2>
+            <p>Pendiente de conectar con el inventario local y el botón de agregar stock.</p>
+        </section>
+
+        <!-- vista 3: realizar pedido -->
+        <section id="pedido" class="tab oculto">
+            <h2>Realizar Pedido</h2>
+            <p>Pendiente: formulario para agregar productos y elegir destino.</p>
+        </section>
+
+        <!-- vista 4: entregas y rutas -->
+        <section id="entregas" class="tab oculto">
+            <h2>Entregas y Pedidos</h2>
+            <p>Pendiente: tabla de pendientes, historial y botón de Dijkstra.</p>
+        </section>
+
+        <!-- vista 5: ventas y estadisticas -->
+        <section id="ventas" class="tab oculto">
+            <h2>Ventas y Estadísticas</h2>
+            <p>Pendiente: historial de ventas, producto estrella y peores pedidos.</p>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
