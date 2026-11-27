@@ -1,4 +1,7 @@
 //Estructura jerárquica de árbol AVL
+// Para fines de este proyecto, se tomarán los últimos dos dígitos en el código de cada producto
+// para realizar cálculos de inserción en el árbol AVL (Ej. de AA04, solo tomará el "04" y compara
+// con los nodos del árbol)
 
 using System;
 using System.Globalization;
@@ -13,9 +16,9 @@ namespace ProyectoDatos2.Structures
         public NodoAVL? right;
         public int altura;
 
-        public NodoAVL(Producto elemento, NodoAVL left, NodoAVL right)
+        public NodoAVL(Producto producto, NodoAVL? left = null, NodoAVL? right = null)
         {
-            this.elemento = elemento;
+            this.producto = producto;
             this.left = left;
             this.right = right;
             this.altura = 0;
@@ -27,32 +30,45 @@ namespace ProyectoDatos2.Structures
         private const int DesbalancePermitido = 1;
         private NodoAVL? raiz;
 
-        private int Altura(NodoAVL n)
+        public void Insertar(Producto valor)
+        {
+            raiz = Insertar(valor, raiz);
+        }
+
+        //---Metodos privados---
+
+        // Metodo para obtener últimos 2 dígitos del código
+        private int ObtenerClave(string codigo)
+        {
+            return int.Parse(codigo.Substring(codigo.Length - 2));
+        }
+
+        // Metodo para calcular la altura, retorna -1 si el nodo es null
+        private int Altura(NodoAVL? n)
         {
             return n is null ? -1 : n.altura;
         }
 
-        // Inserción en árbol. Se usa el atributo "Codigo" en Producto para insertar en el árbol,
-        // mas no represental el valor final del cálculo del árbol
-
-        private NodoAVL Insertar(Producto valor, NodoAVL n)
+        // Metodo de inserción privada. Usa recursividad
+        private NodoAVL Insertar(Producto valor, NodoAVL? n)
         {
             if (n == null)
             {
-                return new AvlNode(valor);
+                return new NodoAVL(valor);
             }
 
-            if (valor.Codigo < n.producto.Codigo)
+            if (ObtenerClave(valor.Codigo) < ObtenerClave(n.producto.Codigo))
             {
                 n.left = Insertar(valor, n.left);
             }
-            else if (valor.Codigo > n.producto.Codigo)
+            else if (ObtenerClave(valor.Codigo) > ObtenerClave(n.producto.Codigo))
             {
                 n.right = Insertar(valor, n.right);
             }
             return Balance(n);
         }
 
+        // Metodo de rebalance del arbol
         private NodoAVL? Balance(NodoAVL? n)
         {
             if (n is null)
@@ -87,11 +103,11 @@ namespace ProyectoDatos2.Structures
             return n;
         }
 
-        //Metodos de rotacion
+        //-Metodos de rotacion-
 
         private NodoAVL RotacionLL(NodoAVL k2)
         {
-            NodoAVL k1 = k2.right;
+            NodoAVL k1 = k2.left!;
             k2.left = k1.right;
             k1.right = k2;
 
@@ -107,13 +123,13 @@ namespace ProyectoDatos2.Structures
             k2.left = k1;
 
             k1.altura = Math.Max(Altura(k1.left), Altura(k1.right)) + 1;
-            k2.altura = Math.Max(Altura(k2.altura), k1.altura) + 1;
+            k2.altura = Math.Max(Altura(k2.right), k1.altura) + 1;
 
             return k2;
         }
         private NodoAVL RotacionLR(NodoAVL k3)
         {
-            k3.left = RotacionRR(k3.left);
+            k3.left = RotacionRR(k3.left!);
             return RotacionLL(k3);
         }
         private NodoAVL RotacionRL(NodoAVL k1)
