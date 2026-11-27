@@ -2,6 +2,7 @@
         Esta es la clase para el servicio de ruta se tiene un grafo asignado, una sede de donde sale
         el vehiculo, su ubicacion actual, tiempo acumulado y hora de salida que tiene que ser 11 o 15
 */
+using ConviTEC.Models; //ahora se usa la implementacion de fabricio
 public class RoutingService
 {
     private Graph grafo;
@@ -70,5 +71,61 @@ public class RoutingService
 
         //retorna true porque si lo logro
         return true;
+    }
+
+    /*
+    -------------------------------------------------------------------------------------------
+    Hace una visita: va al destino pendiente más cercano y entrega ahí todos los
+    pedidos que tengan ese destino, despues devuelve los pedidos entregados (arreglo vacío si
+    no hay ninguno alcanzable) y no modifica "pendientes": quitar los entregados le toca
+    a quien llama (OrderService)
+    -------------------------------------------------------------------------------------------
+    */
+    public Pedido[] CalcularSiguienteEntrega(Pedido[] pendientes)
+    {
+        //Caso especial: no hay nada pendiente
+        if (pendientes == null || pendientes.Length == 0)
+            return new Pedido[0];
+
+        //Dijkstra desde donde está el vehículo ahorita (se recalcula en cada llamada)
+        int actual = grafo.IndexOf(UbicacionActualVehiculo);
+        Dijkstra.Run(grafo, actual, out int[] dist, out int[] prev);
+
+        //Elige el destino pendiente con menor tiempo
+        int mejorDestino = -1;
+        for (int i = 0; i < pendientes.Length; i++)
+        {
+            if (pendientes[i] == null) continue;
+
+            int d = grafo.IndexOf(pendientes[i].Destino);
+            if (d == -1 || dist[d] == Dijkstra.Infinity) continue;   //no existe o es inalcanzable
+
+            //si empatan, gana el que aparece primero en el arreglo, por eso no se usa <=
+            if (mejorDestino == -1 || dist[d] < dist[mejorDestino])
+                mejorDestino = d;
+        }
+
+        //Si ninguno es alcanzable, no hay visita
+        if (mejorDestino == -1)
+            return new Pedido[0];
+
+        //Consolidar: contar cuántos pedidos van a ese destino y juntarlos en un arreglo
+        int cantidad = 0;
+        for (int i = 0; i < pendientes.Length; i++)
+            if (pendientes[i] != null && grafo.IndexOf(pendientes[i].Destino) == mejorDestino)
+                cantidad++;
+
+        Pedido[] entregados = new Pedido[cantidad];
+        int k = 0;
+        for (int i = 0; i < pendientes.Length; i++)
+            if (pendientes[i] != null && grafo.IndexOf(pendientes[i].Destino) == mejorDestino)
+                entregados[k++] = pendientes[i];
+
+        //Mover al vehículo y acumular el tiempo (dist incluye los puntos intermedios)
+        TiempoAcumuladoMinutos += dist[mejorDestino];
+        UbicacionActualVehiculo = grafo.GetName(mejorDestino);
+
+        //Aqui devuelve los pedidos entregados
+        return entregados;
     }
 }
