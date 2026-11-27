@@ -5,8 +5,61 @@ const USE_MOCK = true;
 let sedeActual = {
     id: "SJ",
     nombre: "San José",
-    ubicacionVehiculo: "San José"
+    ubicacionVehiculo: "San José",
+    tiempoAcumulado: 0
 };
+
+// puntos del grafo segun rutas.json
+const destinosDisponibles = [
+    "Liberia",
+    "Cañas",
+    "Puntarenas",
+    "Orotina",
+    "Alajuela",
+    "San José",
+    "Heredia",
+    "Cartago",
+    "Paraíso",
+    "Turrialba",
+    "Guápiles",
+    "Siquirres",
+    "Limón"
+];
+
+// pedidos de ejemplo para probar la vista de entregas en modo mock
+let pedidosMock = [
+    {
+        id: "PED-001",
+        fecha: "2026-11-26 09:30",
+        sedeOrigen: "SJ",
+        destino: "Heredia",
+        detalles: [
+            { codigo: "AA01", nombre: "Agua Mineral Chirripó 700ml", cantidad: 4, precioUnitario: 700 },
+            { codigo: "AA04", nombre: "Café 1620 premium 500g", cantidad: 1, precioUnitario: 6000 }
+        ],
+        sedesParticipantes: ["SJ"],
+        montoTotal: 8800,
+        tiempoMin: 0,
+        estado: "Pendiente"
+    },
+    {
+        id: "PED-002",
+        fecha: "2026-11-26 10:15",
+        sedeOrigen: "SJ",
+        destino: "Cartago",
+        detalles: [
+            { codigo: "AA03", nombre: "Pastel de chocolate Moussemani", cantidad: 1, precioUnitario: 8500 }
+        ],
+        sedesParticipantes: ["SJ"],
+        montoTotal: 8500,
+        tiempoMin: 0,
+        estado: "Pendiente"
+    }
+];
+
+// lista temporal para ir armando un pedido nuevo
+let carritoActual = [];
+let contadorPedidos = 3;
 
 // catalogo completo sacado de los archivos en SeedsJSON/
 const productosMock = [
@@ -56,12 +109,22 @@ function cambiarSedeMock() {
     sedeActual.id = id;
     sedeActual.nombre = nombres[id];
     sedeActual.ubicacionVehiculo = nombres[id];
+    sedeActual.tiempoAcumulado = 0;
 
-    document.getElementById("info-sede").textContent =
-        "Sede: " + sedeActual.nombre + " (" + sedeActual.id + ") | Vehículo en: " + sedeActual.ubicacionVehiculo;
+    actualizarHeaderSede();
 
     document.getElementById("msg-stock").textContent = "";
+    document.getElementById("msg-pedido").textContent = "";
+    document.getElementById("msg-ruta").textContent = "";
     cargarInventarioLocal();
+    cargarPedidos();
+}
+
+// actualiza la barra superior con la sede, donde va el vehiculo y el tiempo
+function actualizarHeaderSede() {
+    document.getElementById("info-sede").textContent =
+        "Sede: " + sedeActual.nombre + " (" + sedeActual.id + ") | Vehículo en: " +
+        sedeActual.ubicacionVehiculo + " | Tiempo recorrido: " + sedeActual.tiempoAcumulado + " min";
 }
 
 // llena la tabla del catalogo global (consulta #5)
@@ -152,18 +215,386 @@ function cargarInventarioLocal() {
     }
 }
 
-// llena el select de productos para agregar stock
-function llenarSelectStock() {
-    let select = document.getElementById("prod-stock");
-    select.innerHTML = "";
+// llena los selects de productos (para agregar stock y para hacer pedidos)
+function llenarSelectsProductos() {
+    let selectStock = document.getElementById("prod-stock");
+    let selectPedido = document.getElementById("prod-pedido");
+    selectStock.innerHTML = "";
+    selectPedido.innerHTML = "";
 
     for (let i = 0; i < productosMock.length; i++) {
         let p = productosMock[i];
+        let texto = p.codigo + " - " + p.nombre + " (₡" + p.precio + ")";
+
+        let op1 = document.createElement("option");
+        op1.value = p.codigo;
+        op1.textContent = texto;
+        selectStock.appendChild(op1);
+
+        let op2 = document.createElement("option");
+        op2.value = p.codigo;
+        op2.textContent = texto;
+        selectPedido.appendChild(op2);
+    }
+}
+
+// llena el select con los destinos del grafo
+function llenarSelectDestinos() {
+    let select = document.getElementById("destino-pedido");
+    select.innerHTML = "";
+
+    for (let i = 0; i < destinosDisponibles.length; i++) {
         let op = document.createElement("option");
-        op.value = p.codigo;
-        op.textContent = p.codigo + " - " + p.nombre;
+        op.value = destinosDisponibles[i];
+        op.textContent = destinosDisponibles[i];
         select.appendChild(op);
     }
+}
+
+// busca un producto por codigo en el arreglo mock
+function buscarProductoMock(codigo) {
+    for (let i = 0; i < productosMock.length; i++) {
+        if (productosMock[i].codigo === codigo) {
+            return productosMock[i];
+        }
+    }
+    return null;
+}
+
+// agrega un producto a la lista temporal antes de confirmar el pedido
+function agregarItemPedido() {
+    let codigo = document.getElementById("prod-pedido").value;
+    let cantidad = parseInt(document.getElementById("cant-pedido").value, 10);
+    let msg = document.getElementById("msg-pedido");
+
+    if (isNaN(cantidad) || cantidad <= 0) {
+        msg.style.color = "red";
+        msg.textContent = "La cantidad debe ser mayor a 0.";
+        return;
+    }
+
+    let prod = buscarProductoMock(codigo);
+    if (prod === null) return;
+
+    // si ya estaba agregado, solo sumamos la cantidad
+    let encontrado = false;
+    for (let i = 0; i < carritoActual.length; i++) {
+        if (carritoActual[i].codigo === codigo) {
+            carritoActual[i].cantidad += cantidad;
+            encontrado = true;
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        carritoActual.push({
+            codigo: prod.codigo,
+            nombre: prod.nombre,
+            cantidad: cantidad,
+            precioUnitario: prod.precio
+        });
+    }
+
+    msg.textContent = "";
+    mostrarCarrito();
+}
+
+function quitarItemPedido(indice) {
+    carritoActual.splice(indice, 1);
+    mostrarCarrito();
+}
+
+function mostrarCarrito() {
+    let tbody = document.getElementById("tbody-carrito");
+    let totalSpan = document.getElementById("total-carrito");
+    tbody.innerHTML = "";
+
+    if (carritoActual.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="vacio">No hay productos agregados todavía.</td></tr>';
+        totalSpan.textContent = "₡0";
+        return;
+    }
+
+    let total = 0;
+
+    for (let i = 0; i < carritoActual.length; i++) {
+        let item = carritoActual[i];
+        let subtotal = item.cantidad * item.precioUnitario;
+        total += subtotal;
+
+        tbody.innerHTML +=
+            "<tr>" +
+            "<td>" + item.codigo + "</td>" +
+            "<td>" + item.nombre + "</td>" +
+            "<td>" + item.cantidad + "</td>" +
+            "<td>₡" + subtotal + "</td>" +
+            '<td><button onclick="quitarItemPedido(' + i + ')">Quitar</button></td>' +
+            "</tr>";
+    }
+
+    totalSpan.textContent = "₡" + total;
+}
+
+// en rutas.json Liberia y Cañas estan aislados del resto del pais
+function hayRutaMock(nombreSede, destino) {
+    let sedeEnGuanacaste = (nombreSede === "Liberia");
+    let destinoEnGuanacaste = (destino === "Liberia" || destino === "Cañas");
+    return sedeEnGuanacaste === destinoEnGuanacaste;
+}
+
+// valida y guarda un nuevo pedido (operacion #1)
+function confirmarPedido() {
+    let msg = document.getElementById("msg-pedido");
+    let destino = document.getElementById("destino-pedido").value;
+
+    if (carritoActual.length === 0) {
+        msg.style.color = "red";
+        msg.textContent = "Agregue al menos un producto al pedido.";
+        return;
+    }
+
+    if (USE_MOCK) {
+        let montoTotal = 0;
+        for (let i = 0; i < carritoActual.length; i++) {
+            montoTotal += carritoActual[i].cantidad * carritoActual[i].precioUnitario;
+        }
+
+        let nuevoId = "PED-00" + contadorPedidos;
+        contadorPedidos++;
+
+        // 1. revisar si existe ruta desde la sede actual hasta el destino
+        if (!hayRutaMock(sedeActual.nombre, destino)) {
+            pedidosMock.push({
+                id: nuevoId,
+                fecha: obtenerFechaTexto(),
+                sedeOrigen: sedeActual.id,
+                destino: destino,
+                detalles: carritoActual.slice(),
+                sedesParticipantes: [],
+                montoTotal: montoTotal,
+                tiempoMin: 0,
+                estado: "Rechazado"
+            });
+
+            msg.style.color = "red";
+            msg.textContent = "Pedido " + nuevoId + " rechazado: no hay ruta desde " + sedeActual.nombre + " hasta " + destino + ".";
+            cargarPedidos();
+            return;
+        }
+
+        // 2. revisar que haya stock suficiente sumando todas las sedes
+        for (let i = 0; i < carritoActual.length; i++) {
+            let item = carritoActual[i];
+            let prod = buscarProductoMock(item.codigo);
+            let stockGlobal = prod.stock.SJ + prod.stock.ALA + prod.stock.LIB + prod.stock.LIM;
+
+            if (stockGlobal < item.cantidad) {
+                pedidosMock.push({
+                    id: nuevoId,
+                    fecha: obtenerFechaTexto(),
+                    sedeOrigen: sedeActual.id,
+                    destino: destino,
+                    detalles: carritoActual.slice(),
+                    sedesParticipantes: [],
+                    montoTotal: montoTotal,
+                    tiempoMin: 0,
+                    estado: "Rechazado"
+                });
+
+                msg.style.color = "red";
+                msg.textContent = "Pedido " + nuevoId + " rechazado: no hay stock global suficiente de " + prod.nombre + " (disponible: " + stockGlobal + ").";
+                cargarPedidos();
+                return;
+            }
+        }
+
+        // 3. si paso todo, rebajamos el stock empezando por nuestra sede
+        let sedesUsadas = [];
+        for (let i = 0; i < carritoActual.length; i++) {
+            let item = carritoActual[i];
+            let prod = buscarProductoMock(item.codigo);
+            let faltante = item.cantidad;
+            let orden = [sedeActual.id, "SJ", "ALA", "LIB", "LIM"];
+
+            for (let s = 0; s < orden.length && faltante > 0; s++) {
+                let idSede = orden[s];
+                if (prod.stock[idSede] > 0) {
+                    let tomar = Math.min(prod.stock[idSede], faltante);
+                    prod.stock[idSede] -= tomar;
+                    faltante -= tomar;
+                    if (sedesUsadas.indexOf(idSede) === -1) {
+                        sedesUsadas.push(idSede);
+                    }
+                }
+            }
+        }
+
+        pedidosMock.push({
+            id: nuevoId,
+            fecha: obtenerFechaTexto(),
+            sedeOrigen: sedeActual.id,
+            destino: destino,
+            detalles: carritoActual.slice(),
+            sedesParticipantes: sedesUsadas,
+            montoTotal: montoTotal,
+            tiempoMin: 0,
+            estado: "Pendiente"
+        });
+
+        carritoActual = [];
+        mostrarCarrito();
+        cargarCatalogo();
+        cargarInventarioLocal();
+        cargarPedidos();
+
+        msg.style.color = "green";
+        msg.textContent = "Pedido " + nuevoId + " confirmado hacia " + destino + " (sedes: " + sedesUsadas.join(", ") + ").";
+    } else {
+        // TODO: llamar a POST /api/pedidos/crear
+    }
+}
+
+// arma un texto cortito con los productos de un pedido
+function resumirProductos(detalles) {
+    if (!detalles || detalles.length === 0) return "-";
+
+    let texto = "";
+    for (let i = 0; i < detalles.length; i++) {
+        if (i > 0) texto += ", ";
+        texto += detalles[i].cantidad + "x " + detalles[i].nombre;
+    }
+    return texto;
+}
+
+// llena las tablas de pedidos pendientes e historial (consultas #2 y #3)
+function cargarPedidos() {
+    let tbodyPend = document.getElementById("tbody-pendientes");
+    let tbodyHist = document.getElementById("tbody-historial");
+    tbodyPend.innerHTML = "";
+    tbodyHist.innerHTML = "";
+
+    if (USE_MOCK) {
+        let cantPend = 0;
+        let cantHist = 0;
+
+        for (let i = 0; i < pedidosMock.length; i++) {
+            let p = pedidosMock[i];
+
+            // mostramos solo los pedidos registrados en la sede actual
+            if (p.sedeOrigen !== sedeActual.id) {
+                continue;
+            }
+
+            if (p.estado === "Pendiente") {
+                tbodyPend.innerHTML +=
+                    "<tr>" +
+                    "<td>" + p.id + "</td>" +
+                    "<td>" + p.fecha + "</td>" +
+                    "<td>" + p.destino + "</td>" +
+                    "<td>" + resumirProductos(p.detalles) + "</td>" +
+                    "<td>₡" + p.montoTotal + "</td>" +
+                    "<td>" + p.estado + "</td>" +
+                    "</tr>";
+                cantPend++;
+            }
+
+            let sedesTxt = p.sedesParticipantes.length > 0 ? p.sedesParticipantes.join(", ") : "-";
+            let tiempoTxt = p.tiempoMin > 0 ? p.tiempoMin + " min" : "-";
+
+            tbodyHist.innerHTML +=
+                "<tr>" +
+                "<td>" + p.id + "</td>" +
+                "<td>" + p.fecha + "</td>" +
+                "<td>" + p.destino + "</td>" +
+                "<td>" + sedesTxt + "</td>" +
+                "<td>₡" + p.montoTotal + "</td>" +
+                "<td>" + tiempoTxt + "</td>" +
+                "<td>" + p.estado + "</td>" +
+                "</tr>";
+            cantHist++;
+        }
+
+        if (cantPend === 0) {
+            tbodyPend.innerHTML = '<tr><td colspan="6" class="vacio">No hay pedidos pendientes en esta sede.</td></tr>';
+        }
+        if (cantHist === 0) {
+            tbodyHist.innerHTML = '<tr><td colspan="7" class="vacio">Todavía no hay pedidos registrados en esta sede.</td></tr>';
+        }
+    } else {
+        // TODO: conectar con GET /api/pedidos/pendientes y GET /api/pedidos/historial
+    }
+}
+
+// simula el siguiente paso de entrega con Dijkstra (operacion #3)
+function calcularSiguienteEntrega() {
+    let msg = document.getElementById("msg-ruta");
+
+    if (USE_MOCK) {
+        // buscamos el primer pedido pendiente de esta sede para simular la entrega
+        let destinoSiguiente = null;
+        for (let i = 0; i < pedidosMock.length; i++) {
+            if (pedidosMock[i].sedeOrigen === sedeActual.id && pedidosMock[i].estado === "Pendiente") {
+                destinoSiguiente = pedidosMock[i].destino;
+                break;
+            }
+        }
+
+        if (destinoSiguiente === null) {
+            msg.style.color = "#444";
+            msg.textContent = "No hay entregas pendientes en esta sede.";
+            return;
+        }
+
+        // tiempo simulado (cuando conectemos el backend viene del Dijkstra de Evan)
+        let tiempoTramo = (destinoSiguiente === sedeActual.ubicacionVehiculo) ? 5 : 25;
+        let origen = sedeActual.ubicacionVehiculo;
+        sedeActual.ubicacionVehiculo = destinoSiguiente;
+        sedeActual.tiempoAcumulado += tiempoTramo;
+
+        // entregamos todos los pedidos pendientes que iban para el mismo destino en 1 visita
+        let idsEntregados = [];
+        for (let i = 0; i < pedidosMock.length; i++) {
+            let p = pedidosMock[i];
+            if (p.sedeOrigen === sedeActual.id && p.estado === "Pendiente" && p.destino === destinoSiguiente) {
+                p.estado = "Entregado";
+                p.tiempoMin = sedeActual.tiempoAcumulado;
+                idsEntregados.push(p.id);
+            }
+        }
+
+        msg.style.color = "green";
+        msg.textContent =
+            "Ruta (Mock): " + origen + " -> " + destinoSiguiente +
+            " | Tramo: " + tiempoTramo + " min" +
+            " | Acumulado: " + sedeActual.tiempoAcumulado + " min" +
+            " | Entregados: " + idsEntregados.join(", ");
+
+        actualizarHeaderSede();
+        cargarPedidos();
+    } else {
+        // TODO: llamar a POST /api/entregas/siguiente
+    }
+}
+
+// reinicia el vehiculo a la sede para la salida de las 11am o 3pm
+function nuevaSalida() {
+    let msg = document.getElementById("msg-ruta");
+
+    if (USE_MOCK) {
+        sedeActual.ubicacionVehiculo = sedeActual.nombre;
+        sedeActual.tiempoAcumulado = 0;
+        actualizarHeaderSede();
+
+        msg.style.color = "#1d3557";
+        msg.textContent = "Nueva salida iniciada desde " + sedeActual.nombre + " (tiempo reiniciado a 0 min).";
+    } else {
+        // TODO: llamar a POST /api/entregas/nueva-salida
+    }
+}
+
+function obtenerFechaTexto() {
+    let hoy = new Date();
+    return hoy.toISOString().slice(0, 10) + " " + hoy.toTimeString().slice(0, 5);
 }
 
 // suma nuevas unidades al inventario local (y luego al backend / RabbitMQ)
@@ -204,7 +635,10 @@ window.onload = function () {
         document.getElementById("zona-mock").style.display = "none";
     }
 
-    llenarSelectStock();
+    actualizarHeaderSede();
+    llenarSelectsProductos();
+    llenarSelectDestinos();
     cargarCatalogo();
     cargarInventarioLocal();
+    cargarPedidos();
 };
