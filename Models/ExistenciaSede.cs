@@ -2,10 +2,10 @@
 
 namespace ProyectoDatos2.Models
 {
-    public class ExistenciaSede
+    public class ExistenciaSede //se pusieron el get y set para que las variaboles agaren los datos
     {
-        public string IdSede;
-        public string Producto;
-        public int Cantidad;
+        public string IdSede {get; set;} = string.Empty;
+        public string Producto {get; set;} = string.Empty;
+        public int Cantidad {get; set;}
     }
 }
