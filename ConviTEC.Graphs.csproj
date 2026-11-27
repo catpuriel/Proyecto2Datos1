@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <!-- Evan: Aqui tengo que ignorar ConviTEC porque hay otro .csproj y otro Program.cs, entonces revienta,
+  pero, si me llevo de ConviTEC el modelo Pedidos.cs y DetallesPedido.cs, porque me van a servir -->
+  <ItemGroup>
+    <Compile Remove="ConviTEC\**" />
+    <None Remove="ConviTEC\**" />
+    <!-- CAMBIAR DESPUES!!!!!!!!!!!!!!!!!
+          VOY A IGNORAR POR AHORITA ArbolAVL.cs PORQUE ESTA DANDO ERROR
+          AL COMPILAR Y NECESITO SEGUIR HACIENDO PRUEBAS, JORDANNY POR FAVOR
+          LEER ESTO GRACIAS, VOY A DEJAR UN COMENTARIO EN EL ARCHIVO TAMBIEN -->
+    <Compile Remove="Structures\ArbolAVL.cs" />
+    <Compile Include="ConviTEC\Models\Pedidos.cs" />
+    <Compile Include="ConviTEC\Models\DetallesPedido.cs" />
+    <None Update="Data\rutas.json" CopyToOutputDirectory="PreserveNewest" /> 
+  </ItemGroup>
+</Project>
