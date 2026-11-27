@@ -33,11 +33,25 @@ Venta[] ventas = PersistenceService.Cargar<Venta>(
 );
 
 var app = builder.Build(); // Crea la aplicación
+var rabbit = new RabbitMqService();
+await rabbit.IniciarAsync();
+
+await rabbit.EscucharAsync(id, mensaje =>
+{
+    Console.WriteLine($"Llegó {mensaje.Tipo} para el pedido {mensaje.PedidoId}");
+    return Task.CompletedTask;
+});
+await rabbit.EscucharActualizacionesInventarioAsync(id, existencia =>
+{
+    Console.WriteLine(
+        $"Actualización global recibida: {existencia.Producto} en {existencia.IdSede}, cantidad {existencia.Cantidad}");
+    return Task.CompletedTask;
+});
 //Permiten servir archivos estaticos
 app.MapGet("/api/pedidos", () => pedidos);
 app.MapGet("/api/ventas", () => ventas);
 app.MapGet("/api/inventario/local", () => inventario);
-app.MapPost("/api/pedidos", (Pedido nuevoPedido) =>
+app.MapPost("/api/pedidos", (Pedido nuevoPedido) => //revisa y lee json al momento de recibir y mandar un pedido
 {
     if (string.IsNullOrWhiteSpace(nuevoPedido.Id))
         return Results.BadRequest("El pedido debe tener un identificador.");
@@ -67,7 +81,7 @@ app.MapPost("/api/ventas", (Venta nuevaVenta) =>
     PersistenceService.Guardar(Path.Combine(carpetaDatos, "ventas.json"), ventas);
     return Results.Ok(nuevaVenta);
 });
-app.MapPost("/api/inventario/local", (ExistenciaSede existencia) =>
+app.MapPost("/api/inventario/local", async (ExistenciaSede existencia) =>
 {
     if (!string.Equals(existencia.IdSede, id, StringComparison.OrdinalIgnoreCase))
         return Results.BadRequest("La existencia debe pertenecer a esta sede.");
@@ -80,12 +94,14 @@ app.MapPost("/api/inventario/local", (ExistenciaSede existencia) =>
         {
             inventario[i] = existencia;
             PersistenceService.Guardar(Path.Combine(carpetaDatos, "Inventario.json"), inventario);
+            await rabbit.PublicarActualizacionInventarioAsync(existencia);
             return Results.Ok(existencia);
         }
     }
 
     inventario = Agregar(inventario, existencia);
     PersistenceService.Guardar(Path.Combine(carpetaDatos, "Inventario.json"), inventario);
+    await rabbit.PublicarActualizacionInventarioAsync(existencia);
     return Results.Ok(existencia);
 });
 app.UseDefaultFiles(); 
@@ -93,6 +109,11 @@ app.UseStaticFiles();
 
 app.MapGet("/", () => "ConviTEC API funcionando"); //Define rutas HTPP, devuelve / como prueba
 app.MapGet("/api/sede/info", () => new { sede, id, puerto }); //Devuelve datos del JSON de la sede
+app.MapPost("/api/prueba-mensaje/{sedeDestino}", async (string sedeDestino) => //prueba para el rabbit
+{
+    await rabbit.SolicitarPedidoAsync("PRUEBA", id, sedeDestino);
+    return Results.Accepted();
+});
 
 app.Run();
 
