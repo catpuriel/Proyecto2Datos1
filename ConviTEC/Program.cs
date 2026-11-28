@@ -31,6 +31,19 @@ Pedido[] pedidos = PersistenceService.Cargar<Pedido>(
 Venta[] ventas = PersistenceService.Cargar<Venta>(
     Path.Combine(carpetaDatos, "ventas.json")
 );
+Graph grafo = Graph.LoadFromJson(
+    Path.Combine(AppContext.BaseDirectory, "Data", "rutas.json"));
+
+string ubicacionSede = id.ToUpperInvariant() switch
+{
+    "LIB" => "Liberia",
+    "ALA" => "Alajuela",
+    "SJ" or "SAN" => "San José",
+    "LIM" => "Limón",
+    _ => throw new ArgumentException($"Sede no reconocida: {id}")
+};
+
+var servicioRutas = new RoutingService(grafo, ubicacionSede);
 
 var app = builder.Build(); // Crea la aplicación
 var rabbit = new RabbitMqService();
@@ -48,35 +61,33 @@ await rabbit.EscucharActualizacionesInventarioAsync(id, existencia =>
     return Task.CompletedTask;
 });
 //Permiten servir archivos estaticos
-app.MapGet("/api/pedidos", () => pedidos);
 app.MapGet("/api/ventas", () => ventas);
 app.MapGet("/api/inventario/local", () => inventario);
-app.MapPost("/api/pedidos", (Pedido nuevoPedido) => //revisa y lee json al momento de recibir y mandar un pedido
+app.MapPost("/api/pedidos", (Pedido nuevoPedido) =>
 {
-    if (string.IsNullOrWhiteSpace(nuevoPedido.Id))
-        return Results.BadRequest("El pedido debe tener un identificador.");
-
-    foreach (Pedido pedido in pedidos)
+    try
     {
-        if (pedido.Id == nuevoPedido.Id)
-            return Results.Conflict("Ya existe un pedido con ese identificador.");
+        pedidos = OrderService.CrearPedido(nuevoPedido, pedidos, inventario, id,
+            Path.Combine(carpetaDatos, "Pedidos.json"),
+            destino => servicioRutas.EsDestinoAlcanzable(ubicacionSede, destino));
+        return nuevoPedido.Estado == "Pendiente"
+            ? Results.Ok(nuevoPedido)
+            : Results.BadRequest(nuevoPedido);
     }
-
-    pedidos = Agregar(pedidos, nuevoPedido);
-    PersistenceService.Guardar(Path.Combine(carpetaDatos, "Pedidos.json"), pedidos);
-    return Results.Ok(nuevoPedido);
+    catch (InvalidOperationException error)
+    {
+        return Results.Conflict(error.Message);
+    }
 });
 app.MapPost("/api/ventas", (Venta nuevaVenta) =>
 {
     if (string.IsNullOrWhiteSpace(nuevaVenta.Id))
         return Results.BadRequest("La venta debe tener un identificador.");
-
     foreach (Venta venta in ventas)
     {
         if (venta.Id == nuevaVenta.Id)
             return Results.Conflict("Ya existe una venta con ese identificador.");
     }
-
     ventas = Agregar(ventas, nuevaVenta);
     PersistenceService.Guardar(Path.Combine(carpetaDatos, "ventas.json"), ventas);
     return Results.Ok(nuevaVenta);
@@ -87,7 +98,6 @@ app.MapPost("/api/inventario/local", async (ExistenciaSede existencia) =>
         return Results.BadRequest("La existencia debe pertenecer a esta sede.");
     if (string.IsNullOrWhiteSpace(existencia.Producto) || existencia.Cantidad < 0)
         return Results.BadRequest("El producto debe tener código y la cantidad no puede ser negativa.");
-
     for (int i = 0; i < inventario.Length; i++)
     {
         if (inventario[i].Producto == existencia.Producto)
@@ -98,7 +108,6 @@ app.MapPost("/api/inventario/local", async (ExistenciaSede existencia) =>
             return Results.Ok(existencia);
         }
     }
-
     inventario = Agregar(inventario, existencia);
     PersistenceService.Guardar(Path.Combine(carpetaDatos, "Inventario.json"), inventario);
     await rabbit.PublicarActualizacionInventarioAsync(existencia);
@@ -114,6 +123,39 @@ app.MapPost("/api/prueba-mensaje/{sedeDestino}", async (string sedeDestino) => /
     await rabbit.SolicitarPedidoAsync("PRUEBA", id, sedeDestino);
     return Results.Accepted();
 });
+app.MapPost("/api/pedidos/{pedidoId}/entregar", (string pedidoId) =>
+{
+    Pedido? pedido = null;
+    foreach (Pedido existente in pedidos)
+    {
+        if (existente.Id == pedidoId)
+        {
+            pedido = existente;
+            break;
+        }
+    }
+    if (pedido is null)
+        return Results.NotFound("No existe ese pedido.");
+    if (pedido.Estado != "Pendiente")
+        return Results.Conflict("El pedido no está Pendiente.");
+    int tiempoAntes = servicioRutas.TiempoAcumuladoMinutos;
+    if (!servicioRutas.MoverA(pedido.Destino))
+        return Results.BadRequest("No hay ruta alcanzable al destino.");
+    int tiempoTraslado =
+        servicioRutas.TiempoAcumuladoMinutos - tiempoAntes;
+    try
+    {
+        var resultado = OrderService.RegistrarEntrega(pedidoId,pedidos,ventas,id,tiempoTraslado,Path.Combine(carpetaDatos, "Pedidos.json"),Path.Combine(carpetaDatos, "ventas.json"));
+        pedidos = resultado.Pedidos;
+        ventas = resultado.Ventas;
+        return Results.Ok(resultado.VentaCreada);
+    }
+    catch (InvalidOperationException error)
+    {
+        return Results.Conflict(error.Message);
+    }
+});
+
 
 app.Run();
 

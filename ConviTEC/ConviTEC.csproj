@@ -6,10 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-  <Compile Include="../Models/ExistenciaSede.cs" Link="Models/ExistenciaSede.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="../Models/ExistenciaSede.cs" Link="Models/ExistenciaSede.cs" />
+    <Compile Include="../Structures/Graph.cs" Link="Structures/Graph.cs" />
+    <Compile Include="../Algorithms/Dijkstra.cs" Link="Algorithms/Dijkstra.cs" />
+    <Compile Include="../Services/RoutingService.cs" Link="Services/RoutingService.cs" />
+    <Content Include="../Data/rutas.json"
+             Link="Data/rutas.json"
+             CopyToOutputDirectory="PreserveNewest" />
     <PackageReference Include="RabbitMQ.Client" Version="7.3.0" />
   </ItemGroup>
-
 </Project>
