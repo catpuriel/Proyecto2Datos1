@@ -9,4 +9,20 @@ public class Pedido // Representa un pedido registrado en una sede.
     public string Destino { get; set; } = string.Empty; // Punto donde se solicita la entrega.
     public DetallePedido[] Detalles { get; set; } = new DetallePedido[0]; // Productos, cantidades y precios.
     public string[] SedesParticipantes { get; set; } = new string[0]; // Sedes que aportan productos al pedido.
+    public Pedido(DateTime fecha, string estado, string sedeO, string destino, DetallePedido[] detalles, string[] sedeP)
+    {
+        FechaCreacion = fecha;
+        Estado = estado;
+        SedeOrigen = sedeO;
+        Destino = destino;
+        Detalles = detalles;
+        SedesParticipantes = sedeP;
+        Id = GeneradorID();
+    }
+    private string GeneradorID()
+    {
+        Guid nuevoId = Guid.NewGuid();
+        Id = nuevoId.ToString(); 
+        return Id;
+    }
 }
