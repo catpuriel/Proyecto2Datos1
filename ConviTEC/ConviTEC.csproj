@@ -8,5 +8,8 @@
   <ItemGroup>
   <Compile Include="../Models/ExistenciaSede.cs" Link="Models/ExistenciaSede.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="7.3.0" />
+  </ItemGroup>
 
 </Project>
