@@ -7,6 +7,13 @@ using System;
 using System.Globalization;
 using ProyectoDatos2.Models;
 
+/*
+NO SE ESTA USANDO ESTE ARCHIVO PORQUE ConviTEC.Graphs.csproj LO ESTA IGNORANDO,
+CUANDO NO DE ERROR DE COMPILACION, POR FAVOR ELIMINAR LA LINEA:
+<Compile Remove="Structures\ArbolAVL.cs" />
+DEL ARCHIVO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+
 namespace ProyectoDatos2.Structures
 {
     public class NodoAVL
