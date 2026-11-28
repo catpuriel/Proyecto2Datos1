@@ -8,4 +8,6 @@ public class Venta // Representa una venta completada.
     public DateTime Fecha { get; set; } = DateTime.Now; // Fecha y hora del registro.
     public DetallePedido[] Detalles { get; set; } = new DetallePedido[0]; // Productos vendidos, cantidades y precios.
     public decimal MontoTotal { get; set; } // Total cobrado por la venta.
+    public int TiempoTrasladoMinutos { get; set; }
+    public decimal Rendimiento => TiempoTrasladoMinutos <= 0 ? 0 : MontoTotal / TiempoTrasladoMinutos;
 }
