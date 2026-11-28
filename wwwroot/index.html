@@ -186,7 +186,47 @@
         <!-- vista 5: ventas y estadisticas -->
         <section id="ventas" class="tab oculto">
             <h2>Ventas y Estadísticas</h2>
-            <p>Pendiente: historial de ventas, producto estrella y peores pedidos.</p>
+
+            <!-- consulta #6: producto estrella -->
+            <div class="caja-form">
+                <h3>Producto Estrella (Mayores Ingresos)</h3>
+                <p id="estrella-info">Sin ventas registradas todavía.</p>
+            </div>
+
+            <!-- consulta #7: peores pedidos ordenados por rendimiento -->
+            <h3>Peores Pedidos Entregados (Rendimiento = Monto / Tiempo)</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ID Pedido</th>
+                        <th>Destino</th>
+                        <th>Monto Total</th>
+                        <th>Tiempo (min)</th>
+                        <th>Rendimiento (₡/min)</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-peores">
+                    <!-- se llena con js -->
+                </tbody>
+            </table>
+
+            <!-- consulta #1: historial de ventas -->
+            <h3 class="espacio-arriba">Historial de Ventas</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>ID Venta</th>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Productos Vendidos</th>
+                        <th>Monto Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-ventas">
+                    <!-- se llena con js -->
+                </tbody>
+            </table>
         </section>
     </main>
 

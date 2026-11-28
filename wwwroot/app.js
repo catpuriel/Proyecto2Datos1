@@ -61,6 +61,10 @@ let pedidosMock = [
 let carritoActual = [];
 let contadorPedidos = 3;
 
+// ventas registradas en modo mock (empieza vacio para probar estado inicial sin errores)
+let ventasMock = [];
+let contadorVentas = 1;
+
 // catalogo completo sacado de los archivos en SeedsJSON/
 const productosMock = [
     { codigo: "AA01", nombre: "Agua Mineral Chirripó 700ml", descripcion: "Botella de agua mineral sin gas", categoria: "Bebidas", precio: 700, stock: { SJ: 30, ALA: 24, LIB: 40, LIM: 30 } },
@@ -118,6 +122,7 @@ function cambiarSedeMock() {
     document.getElementById("msg-ruta").textContent = "";
     cargarInventarioLocal();
     cargarPedidos();
+    cargarEstadisticas();
 }
 
 // actualiza la barra superior con la sede, donde va el vehiculo y el tiempo
@@ -559,6 +564,17 @@ function calcularSiguienteEntrega() {
                 p.estado = "Entregado";
                 p.tiempoMin = sedeActual.tiempoAcumulado;
                 idsEntregados.push(p.id);
+
+                // al entregar el pedido tambien queda registrada la venta
+                ventasMock.push({
+                    idVenta: "VTA-00" + contadorVentas,
+                    idPedido: p.id,
+                    sedeId: sedeActual.id,
+                    fecha: obtenerFechaTexto(),
+                    detalles: p.detalles,
+                    montoTotal: p.montoTotal
+                });
+                contadorVentas++;
             }
         }
 
@@ -571,6 +587,7 @@ function calcularSiguienteEntrega() {
 
         actualizarHeaderSede();
         cargarPedidos();
+        cargarEstadisticas();
     } else {
         // TODO: llamar a POST /api/entregas/siguiente
     }
@@ -629,6 +646,122 @@ function agregarStockLocal() {
     }
 }
 
+// llena la pestaña de ventas, producto estrella y peores pedidos (consultas #1, #6 y #7)
+function cargarEstadisticas() {
+    let estrellaP = document.getElementById("estrella-info");
+    let tbodyPeores = document.getElementById("tbody-peores");
+    let tbodyVentas = document.getElementById("tbody-ventas");
+    tbodyPeores.innerHTML = "";
+    tbodyVentas.innerHTML = "";
+
+    if (USE_MOCK) {
+        // 1. filtrar ventas de la sede actual
+        let ventasSede = [];
+        for (let i = 0; i < ventasMock.length; i++) {
+            if (ventasMock[i].sedeId === sedeActual.id) {
+                ventasSede.push(ventasMock[i]);
+            }
+        }
+
+        // 2. calcular producto estrella en mock (en el backend lo hace StatsService / OrdenamientoPropio)
+        let mejorProd = null;
+        let mejorIngreso = 0;
+
+        for (let c = 0; c < productosMock.length; c++) {
+            let prod = productosMock[c];
+            let unidades = 0;
+
+            for (let v = 0; v < ventasSede.length; v++) {
+                let dets = ventasSede[v].detalles;
+                for (let d = 0; d < dets.length; d++) {
+                    if (dets[d].codigo === prod.codigo) {
+                        unidades += dets[d].cantidad;
+                    }
+                }
+            }
+
+            let ingresos = unidades * prod.precio;
+            if (ingresos > mejorIngreso) {
+                mejorIngreso = ingresos;
+                mejorProd = {
+                    codigo: prod.codigo,
+                    nombre: prod.nombre,
+                    unidades: unidades,
+                    ingresos: ingresos
+                };
+            }
+        }
+
+        if (mejorProd !== null) {
+            estrellaP.textContent =
+                mejorProd.codigo + " - " + mejorProd.nombre +
+                " | Unidades vendidas: " + mejorProd.unidades +
+                " | Ingresos totales: ₡" + mejorProd.ingresos;
+        } else {
+            estrellaP.textContent = "Sin ventas registradas todavía en esta sede.";
+        }
+
+        // 3. sacar pedidos entregados con tiempo > 0 para peores pedidos
+        let entregados = [];
+        for (let i = 0; i < pedidosMock.length; i++) {
+            let p = pedidosMock[i];
+            if (p.sedeOrigen === sedeActual.id && p.estado === "Entregado" && p.tiempoMin > 0) {
+                entregados.push(p);
+            }
+        }
+
+        // ordenamiento sencillo solo para la vista mock (en C# corre nuestro MergeSort)
+        for (let i = 0; i < entregados.length; i++) {
+            for (let j = 0; j < entregados.length - 1 - i; j++) {
+                let r1 = entregados[j].montoTotal / entregados[j].tiempoMin;
+                let r2 = entregados[j + 1].montoTotal / entregados[j + 1].tiempoMin;
+                if (r1 > r2) {
+                    let aux = entregados[j];
+                    entregados[j] = entregados[j + 1];
+                    entregados[j + 1] = aux;
+                }
+            }
+        }
+
+        if (entregados.length === 0) {
+            tbodyPeores.innerHTML = '<tr><td colspan="6" class="vacio">No hay pedidos entregados todavía para calcular rendimiento.</td></tr>';
+        } else {
+            for (let i = 0; i < entregados.length; i++) {
+                let p = entregados[i];
+                let rend = (p.montoTotal / p.tiempoMin).toFixed(2);
+                tbodyPeores.innerHTML +=
+                    "<tr>" +
+                    "<td>" + (i + 1) + "</td>" +
+                    "<td>" + p.id + "</td>" +
+                    "<td>" + p.destino + "</td>" +
+                    "<td>₡" + p.montoTotal + "</td>" +
+                    "<td>" + p.tiempoMin + " min</td>" +
+                    "<td><strong>₡" + rend + "/min</strong></td>" +
+                    "</tr>";
+            }
+        }
+
+        // 4. pintar historial de ventas
+        if (ventasSede.length === 0) {
+            tbodyVentas.innerHTML = '<tr><td colspan="5" class="vacio">No hay ventas registradas todavía en esta sede.</td></tr>';
+        } else {
+            for (let i = 0; i < ventasSede.length; i++) {
+                let v = ventasSede[i];
+                tbodyVentas.innerHTML +=
+                    "<tr>" +
+                    "<td>" + v.idVenta + "</td>" +
+                    "<td>" + v.idPedido + "</td>" +
+                    "<td>" + v.fecha + "</td>" +
+                    "<td>" + resumirProductos(v.detalles) + "</td>" +
+                    "<td><strong>₡" + v.montoTotal + "</strong></td>" +
+                    "</tr>";
+            }
+        }
+    } else {
+        // TODO: conectar con GET /api/ventas/estadisticas
+    }
+}
+
 // se corre apenas carga la pagina
 window.onload = function () {
     if (!USE_MOCK) {
@@ -641,4 +774,5 @@ window.onload = function () {
     cargarCatalogo();
     cargarInventarioLocal();
     cargarPedidos();
+    cargarEstadisticas();
 };
