@@ -89,3 +89,12 @@ th, td {
     text-align: center;
     color: #666;
 }
+
+.texto-total {
+    margin: 10px 0 14px 0;
+    font-size: 15px;
+}
+
+.espacio-arriba {
+    margin-top: 20px;
+}
